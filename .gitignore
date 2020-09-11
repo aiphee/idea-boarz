@@ -1,0 +1,5 @@
+.idea/
+.cache/
+client/dev/
+client/prod/
+node_modules
