@@ -1,0 +1,64 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Roboto, Lato, sans-serif;
+}
+
+body {
+  background: dimgrey;
+}
+fieldset {
+  border: 1px solid whitesmoke;
+  margin: 0 1rem 1rem;
+  padding: 0 1rem;
+
+  & > legend {
+    margin: .5rem;
+    padding: .5rem;
+  }
+}
+
+main {
+  background: lightslategray;
+}
+
+#controlsWrap {
+  display: flex;
+  padding: 1rem;
+}
+
+#orderingWrap {
+  display: flex;
+  flex-direction: column;
+}
+
+#addIdeaForm {
+  label {
+    display: inline-flex;
+    margin: 1rem;
+  }
+}
+
+#sectionsWrap {
+  display: flex;
+  padding: 1rem;
+}
+
+section.section {
+  padding: 1rem;
+  flex: 1;
+  background: whitesmoke;
+  margin: 1rem;
+}
+
+#articlesWrap {
+  display: flex;
+  flex-direction: column;
+}
+
+article.idea {
+  padding: 1rem;
+  margin: 1rem;
+  background: gainsboro;
+}
