@@ -1,6 +1,7 @@
 import express from 'express';
 import path from 'path';
-import expressWs from 'express-ws';
+import socketIO from 'socket.io';
+import http from 'http';
 import session from 'express-session';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -11,7 +12,8 @@ import { getColumnIdeas } from './model';
 import {ws_message_handler} from './ws_message_handler';
 
 const app = express();
-const ws = expressWs(app);
+const httpConnection = http.Server(app);
+const io = socketIO(httpConnection);
 const port = 3000;
 
 app.use(session({
@@ -37,15 +39,12 @@ app.get('/initial.json', function(req, res) {
 
 app.use(express.static(path.resolve(__dirname, '../client/prod/')));
 
-app.ws('/', (socket, req) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.header("Access-Control-Allow-Credentials", 'true');
-  res.setHeader('Content-Type', 'application/json');
+io.on('connection', (socket) => {
   console.log('a user connected');
-
-  ws_message_handler(socket, req);
+  ws_message_handler(socket, io);
 });
 
-app.listen(port, () => {
+
+httpConnection.listen(port, () => {
   console.log('listening on *:' + port);
 });

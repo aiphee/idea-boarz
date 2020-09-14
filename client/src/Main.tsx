@@ -1,7 +1,8 @@
 import React, {FormEvent, useState} from 'react';
 import produce from 'immer';
+import io from 'socket.io-client'; // might try https://github.com/robtaussig/react-use-websocket#readme
 
-const socket = new WebSocket('ws://' + window.location.hostname + ':3000');
+const socket = io('localhost:3000');
 
 import events from '../../shared/events.json';
 
@@ -48,27 +49,17 @@ export const Main = (props: { columns: Columns }) => {
     const addNewText = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        socket.send(JSON.stringify({
-            type: events.IDEA_CREATE_C,
-            payload: {
-                newTextContent,
-                newTextColId,
-            }
-        }));
+        socket.emit(events.IDEA_CREATE_C, {
+            newTextContent,
+            newTextColId,
+        });
     };
 
-    socket.addEventListener('message', (socket) => {
-        const msg = JSON.parse(socket.data) as any;
-
-        switch (msg.type) {
-            case events.IDEA_CREATE_S:
-                const idea: Idea = msg.payload;
-                setColumnsInner(produce(columnsInner, (draft: Columns) => {
-                    draft[idea.col_id].ideas[idea.id] = idea;
-                }));
-        }
-    })
-
+    socket.on(events.IDEA_CREATE_S, (msg: Idea) => {
+        setColumnsInner(produce(columnsInner, (draft: Columns) => {
+            draft[msg.col_id].ideas[msg.id] = msg;
+        }));
+    });
 
     return (
         <main>
