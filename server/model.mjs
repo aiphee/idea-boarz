@@ -20,6 +20,27 @@ const getIdea = (ideaId) => {
   return stmt.get({ ideaId });
 };
 
+
+const likeIdea = (ideaId, guestHash) => {
+  const stmt = db.prepare(`
+    INSERT INTO idea_likes 
+     (idea_id, guest_hash) 
+     VALUES 
+     (@ideaId, @guestHash)
+  `);
+  return stmt.run({ ideaId, guestHash });
+};
+
+
+const dislikeIdea = (ideaId, guestHash) => {
+  const stmt = db.prepare(`
+    DELETE FROM idea_likes 
+     WHERE idea_id=@ideaId AND guest_hash LIKE @guestHash
+  `);
+
+  return stmt.run({ ideaId, guestHash });
+};
+
 const getColumnIdeas = () => {
   const col_stmt = db.prepare('SELECT * FROM main.col');
   const cols_ideas = {};
@@ -50,10 +71,24 @@ const getColumnId = (colName) => {
   return stmt.pluck().get(colName);
 };
 
+const getUserLikes = (guestHash) => {
+  const stmt = db.prepare('SELECT idea_id FROM idea_likes WHERE guest_hash LIKE @guestHash');
+  return stmt.pluck().all({ guestHash });
+};
+
+const ideaLiked = (ideaId, guestHash) => {
+  const stmt = db.prepare('SELECT COUNT(*) FROM idea_likes WHERE idea_id=@ideaId AND guest_hash LIKE @guestHash');
+  return !!stmt.pluck().get({ ideaId, guestHash });
+};
+
 export {
   getColumnIdeas,
   getColumnId,
   insertIdea,
   deleteIdea,
   getIdea,
+  likeIdea,
+  dislikeIdea,
+  getUserLikes,
+  ideaLiked,
 };

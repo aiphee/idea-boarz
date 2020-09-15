@@ -8,10 +8,10 @@ import './main.scss';
 fetch('http://localhost:3000/initial.json')
     .then(response => response.json())
     .then(data => {
-        console.log(data);
+        const { columnIdeas, userLikes } = data;
         render((
             <>
-                <Main columns={data} />
+                <Main columnIdeas={columnIdeas} userLikes={userLikes}  />
             </>
             ),
             document.getElementById('root')

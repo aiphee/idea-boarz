@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-import { getColumnIdeas } from './model';
+import {getColumnIdeas, getUserLikes} from './model';
 import {ws_message_handler} from './ws_message_handler';
 
 const app = express();
@@ -39,7 +39,11 @@ app.get('/initial.json', function(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.header("Access-Control-Allow-Credentials", 'true');
   res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify(getColumnIdeas()));
+
+  res.end(JSON.stringify({
+    columnIdeas: getColumnIdeas(),
+    userLikes: getUserLikes(req.session.id),
+  }));
 });
 
 app.use(express.static(path.resolve(__dirname, '../client/prod/')));

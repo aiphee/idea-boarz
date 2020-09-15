@@ -1,5 +1,6 @@
 import React, {FormEvent, useState} from 'react';
 import produce from 'immer';
+import clsx from 'clsx';
 import io from 'socket.io-client'; // might try https://github.com/robtaussig/react-use-websocket#readme
 
 const socket = io('localhost:3000');
@@ -33,13 +34,14 @@ const orderAttributes = [
     'id'
 ];
 
-export const Main = (props: { columns: Columns }) => {
-    const { columns } = props;
+export const Main = (props: { columnIdeas: Columns, userLikes: number[] }) => {
+    const { columnIdeas, userLikes } = props;
 
     /*
      * We need state, prop change wont cause component rerender
      */
-    const [columnsInner, setColumnsInner] = useState(columns);
+    const [columnsInner, setColumnsInner] = useState(columnIdeas);
+    const [userLikesInner, setUserLikesInner] = useState(userLikes);
 
     const [orderAttr, setOrderAttr] = useState(orderAttributes[0]);
     const [orderDir, setOrderDir] = useState('asc');
@@ -68,8 +70,27 @@ export const Main = (props: { columns: Columns }) => {
         }));
     });
 
+    socket.on(events.IDEA_LIKE_S, (props: { ideaId: number }) => {
+        const { ideaId } = props;
+
+        if (userLikesInner.includes(ideaId)) {
+            setUserLikesInner(produce(userLikesInner, (draft: number[]) => {
+                const index = draft.indexOf(ideaId);
+                delete draft[index];
+            }));
+        } else {
+            setUserLikesInner([...userLikesInner, ideaId]);
+        }
+    });
+
     const deleteIdea = (ideaId: number) => {
         socket.emit(events.IDEA_DELETE_C, {
+            ideaId,
+        });
+    }
+
+    const handleLike = (ideaId: number) => {
+        socket.emit(events.IDEA_LIKE_C, {
             ideaId,
         });
     }
@@ -143,18 +164,19 @@ export const Main = (props: { columns: Columns }) => {
                                             key={idea.id}
                                             style={{ order }}
                                         >
-                                            <div className="text">
-                                                {idea.text}
-                                            </div>
-                                            <div className="actions">
-                                                <button
-                                                    className="delete"
-                                                    title="delete"
-                                                    onClick={() => deleteIdea(idea.id)}
-                                                >x</button>
-                                            </div>
+                                            {idea.text}
+                                            &nbsp;
+                                            <button
+                                                className={clsx({ 'addLike': true, liked: userLikesInner.includes(idea.id)})}
+                                                title="like it"
+                                                onClick={() => handleLike(idea.id)}
+                                            >👍</button>
 
-
+                                            <button
+                                                className="delete"
+                                                title="delete"
+                                                onClick={() => deleteIdea(idea.id)}
+                                            >❌</button>
                                         </article>
                                     );
                                 })}

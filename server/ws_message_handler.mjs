@@ -1,8 +1,15 @@
 import actions from '../shared/events.json';
-import {insertIdea, deleteIdea, getIdea} from './model';
+import {
+  insertIdea,
+  deleteIdea,
+  getIdea,
+  likeIdea,
+  ideaLiked,
+  dislikeIdea,
+} from './model';
 
 export const ws_message_handler = (socket, io) => {
-  const userHash = socket.request.session.id;
+  const guestHash = socket.request.session.id;
   const eventActions = {
     [actions.IDEA_CREATE_C]: (msg) => {
       const colId = msg.newTextColId;
@@ -10,7 +17,7 @@ export const ws_message_handler = (socket, io) => {
 
       const { lastInsertRowid } = insertIdea({
         text: text,
-        guest_hash: userHash,
+        guest_hash: guestHash,
         col_id: colId,
       })
 
@@ -18,7 +25,7 @@ export const ws_message_handler = (socket, io) => {
         id: lastInsertRowid,
         text: text,
         col_id: colId,
-        guest_hash: userHash,
+        guest_hash: guestHash,
         likes: 0,
         deleted: 0,
       })
@@ -35,7 +42,22 @@ export const ws_message_handler = (socket, io) => {
         deleteResult: result,
       })
     },
-    'disconnect': () => console.log(`user ${userHash} disconnected`),
+    [actions.IDEA_LIKE_C]: (msg) => {
+      const { ideaId } = msg;
+
+      const isLiked = ideaLiked(ideaId, guestHash);
+
+      if (isLiked) {
+        dislikeIdea(ideaId, guestHash);
+      } else {
+        likeIdea(ideaId, guestHash);
+      }
+
+      io.emit(actions.IDEA_LIKE_S, {
+        ideaId,
+      })
+    },
+    'disconnect': () => console.log(`user ${guestHash} disconnected`),
   };
 
   for (const [event, action] of Object.entries(eventActions)) {

@@ -3,5 +3,8 @@
   "IDEA_CREATE_S": "create_idea_server",
 
   "IDEA_DELETE_C": "delete_idea_client",
-  "IDEA_DELETE_S": "delete_idea_server"
+  "IDEA_DELETE_S": "delete_idea_server",
+
+  "IDEA_LIKE_C": "like_idea_client",
+  "IDEA_LIKE_S": "like_idea_server"
 }

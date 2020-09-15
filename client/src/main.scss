@@ -70,4 +70,8 @@ article.idea {
     top: -1rem;
     right: -1rem;
   }
+
+  button:not(.liked) {
+    filter: grayscale(1);
+  }
 }
