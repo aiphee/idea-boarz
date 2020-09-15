@@ -10,6 +10,16 @@ const insertIdea = (data) => {
   return stmt.run(data);
 };
 
+const deleteIdea = (ideaId) => {
+  const stmt = db.prepare('DELETE FROM idea WHERE idea.id=@ideaId');
+  return stmt.run({ ideaId });
+};
+
+const getIdea = (ideaId) => {
+  const stmt = db.prepare('SELECT * FROM idea WHERE idea.id=@ideaId');
+  return stmt.get({ ideaId });
+};
+
 const getColumnIdeas = () => {
   const col_stmt = db.prepare('SELECT * FROM main.col');
   const cols_ideas = {};
@@ -44,4 +54,6 @@ export {
   getColumnIdeas,
   getColumnId,
   insertIdea,
+  deleteIdea,
+  getIdea,
 };

@@ -61,6 +61,19 @@ export const Main = (props: { columns: Columns }) => {
         }));
     });
 
+    socket.on(events.IDEA_DELETE_S, (props: { ideaId: number; colId: number }) => {
+        const { ideaId, colId } = props;
+        setColumnsInner(produce(columnsInner, (draft: Columns) => {
+            delete draft[colId].ideas[ideaId];
+        }));
+    });
+
+    const deleteIdea = (ideaId: number) => {
+        socket.emit(events.IDEA_DELETE_C, {
+            ideaId,
+        });
+    }
+
     return (
         <main>
             <div id="controlsWrap">
@@ -130,7 +143,18 @@ export const Main = (props: { columns: Columns }) => {
                                             key={idea.id}
                                             style={{ order }}
                                         >
-                                            {idea.text}
+                                            <div className="text">
+                                                {idea.text}
+                                            </div>
+                                            <div className="actions">
+                                                <button
+                                                    className="delete"
+                                                    title="delete"
+                                                    onClick={() => deleteIdea(idea.id)}
+                                                >x</button>
+                                            </div>
+
+
                                         </article>
                                     );
                                 })}

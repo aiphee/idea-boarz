@@ -1,5 +1,5 @@
 import actions from '../shared/events.json';
-import { insertIdea } from './model';
+import {insertIdea, deleteIdea, getIdea} from './model';
 
 export const ws_message_handler = (socket, io) => {
   const userHash = socket.request.session.id;
@@ -21,6 +21,18 @@ export const ws_message_handler = (socket, io) => {
         guest_hash: userHash,
         likes: 0,
         deleted: 0,
+      })
+    },
+    [actions.IDEA_DELETE_C]: (msg) => {
+      const { ideaId } = msg;
+
+      const idea = getIdea(ideaId);
+      const result = deleteIdea(ideaId);
+
+      io.emit(actions.IDEA_DELETE_S, {
+        ideaId,
+        colId: idea.col_id,
+        deleteResult: result,
       })
     },
     'disconnect': () => console.log(`user ${userHash} disconnected`),
