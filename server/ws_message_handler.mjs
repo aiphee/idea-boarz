@@ -2,6 +2,7 @@ import actions from '../shared/events.json';
 import { insertIdea } from './model';
 
 export const ws_message_handler = (socket, io) => {
+  const userHash = socket.request.session.id;
   const eventActions = {
     [actions.IDEA_CREATE_C]: (msg) => {
       const colId = msg.newTextColId;
@@ -9,7 +10,7 @@ export const ws_message_handler = (socket, io) => {
 
       const { lastInsertRowid } = insertIdea({
         text: text,
-        guest_hash: '1ff',
+        guest_hash: userHash,
         col_id: colId,
       })
 
@@ -17,12 +18,12 @@ export const ws_message_handler = (socket, io) => {
         id: lastInsertRowid,
         text: text,
         col_id: colId,
-        guest_hash: '1ff',
+        guest_hash: userHash,
         likes: 0,
         deleted: 0,
       })
     },
-    'disconnect': () => console.log('user disconnected'),
+    'disconnect': () => console.log(`user ${userHash} disconnected`),
   };
 
   for (const [event, action] of Object.entries(eventActions)) {

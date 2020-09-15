@@ -11,7 +11,7 @@ fetch('http://localhost:3000/initial.json')
         console.log(data);
         render((
             <>
-                <Main columns={data}/>
+                <Main columns={data} />
             </>
             ),
             document.getElementById('root')

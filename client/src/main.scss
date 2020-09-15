@@ -43,6 +43,7 @@ main {
 #sectionsWrap {
   display: flex;
   padding: 1rem;
+  flex-wrap: wrap;
 }
 
 section.section {
@@ -50,6 +51,7 @@ section.section {
   flex: 1;
   background: whitesmoke;
   margin: 1rem;
+  min-width: 300px;
 }
 
 #articlesWrap {
