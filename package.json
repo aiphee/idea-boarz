@@ -4,6 +4,7 @@
   "license": "MIT",
   "dependencies": {
     "clsx": "^1.1.1",
+    "easy-peasy": "^4.0.1",
     "express-session": "^1.17.1",
     "immer": "^7.0.9",
     "react": "^16.13.1",
@@ -25,7 +26,7 @@
     "socket.io": "^2.3.0"
   },
   "scripts": {
-    "server": "nodemon --experimental-modules server/index.mjs",
+    "server": "nodemon --experimental-modules --es-module-specifier-resolution=node server/index.mjs",
     "clientDev": "parcel client/src/index.html --open --out-dir client/dev",
     "clientProd": "parcel build client/src/index.html --out-dir client/prod"
   }
